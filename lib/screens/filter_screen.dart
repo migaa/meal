@@ -3,16 +3,27 @@ import '../widgets/main_drawer.dart';
 
 class FilterScreen extends StatefulWidget {
   static const routName = '/filters';
-
+  final Function saveFilters;
+  final Map<String, bool> currentFilters;
+  FilterScreen(this.currentFilters, this.saveFilters);
   @override
   _FilterScreenState createState() => _FilterScreenState();
 }
 
 class _FilterScreenState extends State<FilterScreen> {
-  bool _gluttenFree = false;
-  bool _vegeterian = false;
+  bool _glutenFree = false;
+  bool _vegetarian = false;
   bool _vegan = false;
   bool _lactoseFree = false;
+
+  @override
+  void initState() {
+    _glutenFree = widget.currentFilters['gluten'];
+    _lactoseFree = widget.currentFilters['lactose'];
+    _vegetarian = widget.currentFilters['vegetarian'];
+    _vegan = widget.currentFilters['vegan'];
+    super.initState();
+  }
 
   Widget _buildSwitchListTile(
     String title,
@@ -33,6 +44,20 @@ class _FilterScreenState extends State<FilterScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Хайлт'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: () {
+              final selectedFilters = {
+                'gluten': _glutenFree,
+                'lactose': _lactoseFree,
+                'vegan': _vegan,
+                'vegetarian': _vegetarian,
+              };
+              widget.saveFilters(selectedFilters);
+            },
+          ),
+        ],
       ),
       drawer: MainDrawer(),
       body: Column(
@@ -50,10 +75,10 @@ class _FilterScreenState extends State<FilterScreen> {
             child: ListView(
               children: <Widget>[
                 _buildSwitchListTile(
-                    'Цавуулаг багатай', 'Зөвхөн цавуулаггүй хоол', _gluttenFree,
+                    'Цавуулаг багатай', 'Зөвхөн цавуулаггүй хоол', _glutenFree,
                     (newValue) {
                   setState(() {
-                    _gluttenFree = newValue;
+                    _glutenFree = newValue;
                   });
                 }),
                 _buildSwitchListTile(
@@ -63,10 +88,10 @@ class _FilterScreenState extends State<FilterScreen> {
                   });
                 }),
                 _buildSwitchListTile(
-                    'Цагаан хоол', 'Зөвхөн цагаан хоол', _vegeterian,
+                    'Цагаан хоол', 'Зөвхөн цагаан хоол', _vegetarian,
                     (newValue) {
                   setState(() {
-                    _vegeterian = newValue;
+                    _vegetarian = newValue;
                   });
                 }),
                 _buildSwitchListTile(
